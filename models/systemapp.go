@@ -15,7 +15,7 @@ type Systemapp struct {
 }
 
 func (t *Systemapp) tableName() string {
-	return "Systemapp"
+	return "systemapp"
 }
 
 func init() {

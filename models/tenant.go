@@ -30,6 +30,7 @@ type Tenant struct {
 	LastModifierUserId   int64     `orm:"column(LastModifierUserId);null"`
 	Name                 string    `orm:"column(Name);size(128)"`
 	TenancyName          string    `orm:"column(TenancyName);size(64)"`
+	SysId                int       `orm:"column(SysId);size(45)"`
 }
 
 func (t *Tenant) TableName() string {

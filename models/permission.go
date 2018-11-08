@@ -21,6 +21,7 @@ type Permission struct {
 	RoleId        int       `orm:"column(RoleId);null"`
 	UserId        int64     `orm:"column(UserId);null"`
 	DisplayName   string    `orm:"column(DisplayName);size(50)"`
+	SysId         int       `orm:"column(SysId);null"`
 }
 
 func (t *Permission) TableName() string {

@@ -17,6 +17,7 @@ type Userrole struct {
 	RoleId        int       `orm:"column(RoleId)"`
 	TenantId      int       `orm:"column(TenantId);null"`
 	UserId        int64     `orm:"column(UserId)"`
+	SysId         int       `orm:"column(SysId);null"`
 }
 
 func (t *Userrole) TableName() string {

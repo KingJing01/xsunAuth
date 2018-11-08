@@ -1,0 +1,1301 @@
+swagger: "2.0"
+info:
+  title: beego Test API
+  description: beego has a very cool tools to autogenerate documents for your API
+  version: 1.0.0
+  termsOfService: http://beego.me/
+  contact:
+    email: astaxie@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+basePath: /v1
+paths:
+  /authoritymanage/AuthorityError:
+    get:
+      tags:
+      - authoritymanage
+  /authoritymanage/CreatePermission:
+    post:
+      tags:
+      - authoritymanage
+      description: 新增基础权限
+      operationId: AuthorityManageController.CreatePermission
+      parameters:
+      - in: header
+        name: Authorization
+        description: Token信息
+        required: true
+        type: string
+      - in: body
+        name: Id
+        description: 权限ID
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: Name
+        description: 权限Name
+        required: true
+        type: string
+      - in: body
+        name: DisplayName
+        description: 权限中文名
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.OperResult'
+        "400":
+          description: Invalid email supplied
+        "404":
+          description: User not found
+  /authoritymanage/CreateRole:
+    post:
+      tags:
+      - authoritymanage
+      description: 新增角色
+      operationId: AuthorityManageController.CreateRole
+      parameters:
+      - in: header
+        name: Authorization
+        description: Token信息
+        required: true
+        type: string
+      - in: body
+        name: TenantId
+        description: 租户ID
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: Name
+        description: 角色Name
+        required: true
+        type: string
+      - in: body
+        name: DisplayName
+        description: 角色中文名
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.OperResult'
+        "400":
+          description: Invalid email supplied
+        "404":
+          description: User not found
+  /authoritymanage/CreateTenant:
+    post:
+      tags:
+      - authoritymanage
+      description: 新增租户
+      operationId: AuthorityManageController.CreateTenant
+      parameters:
+      - in: header
+        name: Authorization
+        description: Token信息
+        required: true
+        type: string
+      - in: body
+        name: Name
+        description: 租户名
+        required: true
+        type: string
+      - in: body
+        name: TenancyName
+        description: 租户中文名
+        required: true
+        type: string
+      - in: body
+        name: EmailAddress
+        description: 管理员的EMAIL
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.TenantInfo'
+        "400":
+          description: Invalid email supplied
+        "404":
+          description: User not found
+  /authoritymanage/DeleteRole:
+    post:
+      tags:
+      - authoritymanage
+      description: 删除角色
+      operationId: AuthorityManageController.DeleteRole
+      parameters:
+      - in: header
+        name: Authorization
+        description: Token信息
+        required: true
+        type: string
+      - in: body
+        name: Id
+        description: 角色Id
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.OperResult'
+        "400":
+          description: Invalid email supplied
+        "404":
+          description: User not found
+  /authoritymanage/DeleteTenant:
+    post:
+      tags:
+      - authoritymanage
+      description: 删除租户
+      operationId: AuthorityManageController.DeleteTenant
+      parameters:
+      - in: header
+        name: Authorization
+        description: Token信息
+        required: true
+        type: string
+      - in: body
+        name: Id
+        description: 租户ID
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.OperResult'
+        "400":
+          description: Invalid email supplied
+        "404":
+          description: User not found
+  /authoritymanage/GetPlatformPermissionList:
+    get:
+      tags:
+      - authoritymanage
+      description: 获取平台的基础权限
+      operationId: AuthorityManageController.GetPlatformPermissionList
+      parameters:
+      - in: header
+        name: Authorization
+        description: Token信息
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.OperResult'
+        "400":
+          description: Invalid email supplied
+        "404":
+          description: User not found
+  /authoritymanage/GetTenant:
+    get:
+      tags:
+      - authoritymanage
+  /authoritymanage/GetUserInfo:
+    get:
+      tags:
+      - authoritymanage
+      description: 根据TOKEN获取用户信息
+      operationId: AuthorityManageController.GetUserInfo
+      parameters:
+      - in: header
+        name: Authorization
+        description: Token信息
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.UserInfo'
+        "400":
+          description: Invalid email supplied
+        "404":
+          description: User not found
+  /authoritymanage/Login:
+    post:
+      tags:
+      - authoritymanage
+      description: 登入接口
+      operationId: AuthorityManageController.Login
+      parameters:
+      - in: path
+        name: key
+        description: The email for login
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.LoginResult'
+        "400":
+          description: Invalid email supplied
+        "404":
+          description: User not found
+  /authoritymanage/Logout:
+    post:
+      tags:
+      - authoritymanage
+      description: 登出
+      operationId: AuthorityManageController.Logout
+  /authoritymanage/RoleList:
+    get:
+      tags:
+      - authoritymanage
+      description: 获取角色清单
+      operationId: AuthorityManageController.RoleList
+      parameters:
+      - in: header
+        name: Authorization
+        description: Token信息
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.TenantInfo'
+        "400":
+          description: Invalid email supplied
+        "404":
+          description: User not found
+  /authoritymanage/SetTenantPermission:
+    post:
+      tags:
+      - authoritymanage
+      description: 设置租户的基础权限
+      operationId: AuthorityManageController.SetTenantPermission
+      parameters:
+      - in: header
+        name: Authorization
+        description: Token信息
+        required: true
+        type: string
+      - in: body
+        name: Tenantid
+        description: 租户ID
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: Permissions
+        description: 权限LIST
+        required: true
+        schema:
+          type: array
+          items:
+            format: int64
+            type: integer
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.OperResult'
+        "400":
+          description: Invalid email supplied
+        "404":
+          description: User not found
+  /authoritymanage/SetUserRoles:
+    post:
+      tags:
+      - authoritymanage
+      description: 给用户配角色
+      operationId: AuthorityManageController.SetUserRoles
+      parameters:
+      - in: header
+        name: Authorization
+        description: Token信息
+        required: true
+        type: string
+      - in: body
+        name: UserId
+        description: 用户Id
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: Roles
+        description: 角色List
+        required: true
+        schema:
+          type: array
+          items:
+            format: int64
+            type: integer
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.OperResult'
+        "400":
+          description: Invalid email supplied
+        "404":
+          description: User not found
+  /authoritymanage/UpdateRole:
+    post:
+      tags:
+      - authoritymanage
+      description: 更新角色
+      operationId: AuthorityManageController.UpdateRole
+      parameters:
+      - in: header
+        name: Authorization
+        description: Token信息
+        required: true
+        type: string
+      - in: body
+        name: Id
+        description: 角色Id
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: Name
+        description: 角色Name
+        required: true
+        type: string
+      - in: body
+        name: DisplayName
+        description: 角色中文名
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.OperResult'
+        "400":
+          description: Invalid email supplied
+        "404":
+          description: User not found
+  /authoritymanage/UpdateTenant:
+    post:
+      tags:
+      - authoritymanage
+      description: 更新租户
+      operationId: AuthorityManageController.UpdateTenant
+      parameters:
+      - in: header
+        name: Authorization
+        description: Token信息
+        required: true
+        type: string
+      - in: body
+        name: Name
+        description: 租户名
+        required: true
+        type: string
+      - in: body
+        name: TenancyName
+        description: 租户中文名
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.OperResult'
+        "400":
+          description: Invalid email supplied
+        "404":
+          description: User not found
+  /authoritymanage/all:
+    get:
+      tags:
+      - authoritymanage
+  /permission/:
+    get:
+      tags:
+      - permission
+      description: get Permission
+      operationId: PermissionController.Get All
+      parameters:
+      - in: query
+        name: query
+        description: Filter. e.g. col1:v1,col2:v2 ...
+        type: string
+      - in: query
+        name: fields
+        description: Fields returned. e.g. col1,col2 ...
+        type: string
+      - in: query
+        name: sortby
+        description: Sorted-by fields. e.g. col1,col2 ...
+        type: string
+      - in: query
+        name: order
+        description: Order corresponding to each sortby field, if single value, apply
+          to all sortby fields. e.g. desc,asc ...
+        type: string
+      - in: query
+        name: limit
+        description: Limit the size of result set. Must be an integer
+        type: string
+      - in: query
+        name: offset
+        description: Start position of result set. Must be an integer
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Permission'
+        "403":
+          description: ""
+    post:
+      tags:
+      - permission
+      description: create Permission
+      operationId: PermissionController.Post
+      parameters:
+      - in: body
+        name: body
+        description: body for Permission content
+        required: true
+        schema:
+          $ref: '#/definitions/models.Permission'
+      responses:
+        "201":
+          description: '{int} models.Permission'
+        "403":
+          description: body is empty
+  /permission/{id}:
+    get:
+      tags:
+      - permission
+      description: get Permission by id
+      operationId: PermissionController.Get One
+      parameters:
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Permission'
+        "403":
+          description: :id is empty
+    put:
+      tags:
+      - permission
+      description: update the Permission
+      operationId: PermissionController.Put
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: body for Permission content
+        required: true
+        schema:
+          $ref: '#/definitions/models.Permission'
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Permission'
+        "403":
+          description: :id is not int
+    delete:
+      tags:
+      - permission
+      description: delete the Permission
+      operationId: PermissionController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: string
+      responses:
+        "200":
+          description: '{string} delete success!'
+        "403":
+          description: id is empty
+  /role/:
+    get:
+      tags:
+      - role
+      description: get Role
+      operationId: RoleController.Get All
+      parameters:
+      - in: query
+        name: query
+        description: Filter. e.g. col1:v1,col2:v2 ...
+        type: string
+      - in: query
+        name: fields
+        description: Fields returned. e.g. col1,col2 ...
+        type: string
+      - in: query
+        name: sortby
+        description: Sorted-by fields. e.g. col1,col2 ...
+        type: string
+      - in: query
+        name: order
+        description: Order corresponding to each sortby field, if single value, apply
+          to all sortby fields. e.g. desc,asc ...
+        type: string
+      - in: query
+        name: limit
+        description: Limit the size of result set. Must be an integer
+        type: string
+      - in: query
+        name: offset
+        description: Start position of result set. Must be an integer
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Role'
+        "403":
+          description: ""
+    post:
+      tags:
+      - role
+      description: create Role
+      operationId: RoleController.Post
+      parameters:
+      - in: body
+        name: body
+        description: body for Role content
+        required: true
+        schema:
+          $ref: '#/definitions/models.Role'
+      responses:
+        "201":
+          description: '{int} models.Role'
+        "403":
+          description: body is empty
+  /role/{id}:
+    get:
+      tags:
+      - role
+      description: get Role by id
+      operationId: RoleController.Get One
+      parameters:
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Role'
+        "403":
+          description: :id is empty
+    put:
+      tags:
+      - role
+      description: update the Role
+      operationId: RoleController.Put
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: body for Role content
+        required: true
+        schema:
+          $ref: '#/definitions/models.Role'
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Role'
+        "403":
+          description: :id is not int
+    delete:
+      tags:
+      - role
+      description: delete the Role
+      operationId: RoleController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: string
+      responses:
+        "200":
+          description: '{string} delete success!'
+        "403":
+          description: id is empty
+  /tenant/:
+    get:
+      tags:
+      - tenant
+      description: get Tenant
+      operationId: TenantController.Get All
+      parameters:
+      - in: query
+        name: query
+        description: Filter. e.g. col1:v1,col2:v2 ...
+        type: string
+      - in: query
+        name: fields
+        description: Fields returned. e.g. col1,col2 ...
+        type: string
+      - in: query
+        name: sortby
+        description: Sorted-by fields. e.g. col1,col2 ...
+        type: string
+      - in: query
+        name: order
+        description: Order corresponding to each sortby field, if single value, apply
+          to all sortby fields. e.g. desc,asc ...
+        type: string
+      - in: query
+        name: limit
+        description: Limit the size of result set. Must be an integer
+        type: string
+      - in: query
+        name: offset
+        description: Start position of result set. Must be an integer
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Tenant'
+        "403":
+          description: ""
+    post:
+      tags:
+      - tenant
+      description: create Tenant
+      operationId: TenantController.Post
+      parameters:
+      - in: body
+        name: body
+        description: body for Tenant content
+        required: true
+        schema:
+          $ref: '#/definitions/models.Tenant'
+      responses:
+        "201":
+          description: '{int} models.Tenant'
+        "403":
+          description: body is empty
+  /tenant/{id}:
+    get:
+      tags:
+      - tenant
+      description: get Tenant by id
+      operationId: TenantController.Get One
+      parameters:
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Tenant'
+        "403":
+          description: :id is empty
+    put:
+      tags:
+      - tenant
+      description: update the Tenant
+      operationId: TenantController.Put
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: body for Tenant content
+        required: true
+        schema:
+          $ref: '#/definitions/models.Tenant'
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Tenant'
+        "403":
+          description: :id is not int
+    delete:
+      tags:
+      - tenant
+      description: delete the Tenant
+      operationId: TenantController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: string
+      responses:
+        "200":
+          description: '{string} delete success!'
+        "403":
+          description: id is empty
+  /user/:
+    get:
+      tags:
+      - user
+      description: get User
+      operationId: UserController.Get All
+      parameters:
+      - in: query
+        name: query
+        description: Filter. e.g. col1:v1,col2:v2 ...
+        type: string
+      - in: query
+        name: fields
+        description: Fields returned. e.g. col1,col2 ...
+        type: string
+      - in: query
+        name: sortby
+        description: Sorted-by fields. e.g. col1,col2 ...
+        type: string
+      - in: query
+        name: order
+        description: Order corresponding to each sortby field, if single value, apply
+          to all sortby fields. e.g. desc,asc ...
+        type: string
+      - in: query
+        name: limit
+        description: Limit the size of result set. Must be an integer
+        type: string
+      - in: query
+        name: offset
+        description: Start position of result set. Must be an integer
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.User'
+        "403":
+          description: ""
+    post:
+      tags:
+      - user
+      description: create User
+      operationId: UserController.Post
+      parameters:
+      - in: body
+        name: body
+        description: body for User content
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      responses:
+        "201":
+          description: '{int} models.User'
+        "403":
+          description: body is empty
+  /user/{id}:
+    get:
+      tags:
+      - user
+      description: get User by id
+      operationId: UserController.Get One
+      parameters:
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.User'
+        "403":
+          description: :id is empty
+    put:
+      tags:
+      - user
+      description: update the User
+      operationId: UserController.Put
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: body for User content
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.User'
+        "403":
+          description: :id is not int
+    delete:
+      tags:
+      - user
+      description: delete the User
+      operationId: UserController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: string
+      responses:
+        "200":
+          description: '{string} delete success!'
+        "403":
+          description: id is empty
+  /userrole/:
+    get:
+      tags:
+      - userrole
+      description: get Userrole
+      operationId: UserroleController.Get All
+      parameters:
+      - in: query
+        name: query
+        description: Filter. e.g. col1:v1,col2:v2 ...
+        type: string
+      - in: query
+        name: fields
+        description: Fields returned. e.g. col1,col2 ...
+        type: string
+      - in: query
+        name: sortby
+        description: Sorted-by fields. e.g. col1,col2 ...
+        type: string
+      - in: query
+        name: order
+        description: Order corresponding to each sortby field, if single value, apply
+          to all sortby fields. e.g. desc,asc ...
+        type: string
+      - in: query
+        name: limit
+        description: Limit the size of result set. Must be an integer
+        type: string
+      - in: query
+        name: offset
+        description: Start position of result set. Must be an integer
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Userrole'
+        "403":
+          description: ""
+    post:
+      tags:
+      - userrole
+      description: create Userrole
+      operationId: UserroleController.Post
+      parameters:
+      - in: body
+        name: body
+        description: body for Userrole content
+        required: true
+        schema:
+          $ref: '#/definitions/models.Userrole'
+      responses:
+        "201":
+          description: '{int} models.Userrole'
+        "403":
+          description: body is empty
+  /userrole/{id}:
+    get:
+      tags:
+      - userrole
+      description: get Userrole by id
+      operationId: UserroleController.Get One
+      parameters:
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Userrole'
+        "403":
+          description: :id is empty
+    put:
+      tags:
+      - userrole
+      description: update the Userrole
+      operationId: UserroleController.Put
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: body for Userrole content
+        required: true
+        schema:
+          $ref: '#/definitions/models.Userrole'
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Userrole'
+        "403":
+          description: :id is not int
+    delete:
+      tags:
+      - userrole
+      description: delete the Userrole
+      operationId: UserroleController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: string
+      responses:
+        "200":
+          description: '{string} delete success!'
+        "403":
+          description: id is empty
+definitions:
+  controllers.LoginResult:
+    title: LoginResult
+    type: object
+    properties:
+      Message:
+        type: string
+      Result:
+        type: boolean
+      Token:
+        type: string
+  controllers.OperResult:
+    title: OperResult
+    type: object
+    properties:
+      Message:
+        type: string
+      Result:
+        type: boolean
+  controllers.RoleInfo:
+    title: RoleInfo
+    type: object
+    properties:
+      DisplayName:
+        type: string
+      Name:
+        type: string
+      RoleId:
+        type: integer
+        format: int64
+  controllers.TenantInfo:
+    title: TenantInfo
+    type: object
+    properties:
+      CreateTime:
+        type: string
+      IsDelete:
+        type: boolean
+      Message:
+        type: string
+      Name:
+        type: string
+      Result:
+        type: boolean
+      Roles:
+        type: array
+        items:
+          $ref: '#/definitions/controllers.RoleInfo'
+      TenancyName:
+        type: string
+      TenantId:
+        type: integer
+        format: int64
+  controllers.UserInfo:
+    title: UserInfo
+    type: object
+    properties:
+      Age:
+        type: string
+      Avatar:
+        type: string
+      EmailAddress:
+        type: string
+      Gender:
+        type: string
+      Message:
+        type: string
+      Name:
+        type: string
+      Permissions:
+        type: array
+        items:
+          type: string
+      PhoneNumber:
+        type: string
+      Result:
+        type: boolean
+      UserId:
+        type: integer
+        format: int64
+      UserName:
+        type: string
+  models.Permission:
+    title: Permission
+    type: object
+    properties:
+      CreationTime:
+        type: string
+        format: datetime
+      CreatorUserId:
+        type: integer
+        format: int64
+      Discriminator:
+        type: string
+      DisplayName:
+        type: string
+      Id:
+        type: integer
+        format: int64
+      IsGranted:
+        type: boolean
+      Name:
+        type: string
+      RoleId:
+        type: integer
+        format: int64
+      TenantId:
+        type: integer
+        format: int64
+      UserId:
+        type: integer
+        format: int64
+  models.Role:
+    title: Role
+    type: object
+    properties:
+      ConcurrencyStamp:
+        type: string
+      CreationTime:
+        type: string
+        format: datetime
+      CreatorUserId:
+        type: integer
+        format: int64
+      DeleterUserId:
+        type: integer
+        format: int64
+      DeletionTime:
+        type: string
+        format: datetime
+      Description:
+        type: string
+      DisplayName:
+        type: string
+      Id:
+        type: integer
+        format: int64
+      IsDefault:
+        type: boolean
+      IsDeleted:
+        type: boolean
+      IsStatic:
+        type: boolean
+      LastModificationTime:
+        type: string
+        format: datetime
+      LastModifierUserId:
+        type: integer
+        format: int64
+      Name:
+        type: string
+      NormalizedName:
+        type: string
+      TenantId:
+        type: integer
+        format: int64
+  models.Tenant:
+    title: Tenant
+    type: object
+    properties:
+      ConnectionString:
+        type: string
+      CreationTime:
+        type: string
+        format: datetime
+      CreatorUserId:
+        type: integer
+        format: int64
+      DeleterUserId:
+        type: integer
+        format: int64
+      DeletionTime:
+        type: string
+        format: datetime
+      EditionId:
+        type: integer
+        format: int64
+      Id:
+        type: integer
+        format: int64
+      IsActive:
+        type: boolean
+      IsDeleted:
+        type: boolean
+      LastModificationTime:
+        type: string
+        format: datetime
+      LastModifierUserId:
+        type: integer
+        format: int64
+      Name:
+        type: string
+      TenancyName:
+        type: string
+  models.User:
+    title: User
+    type: object
+    properties:
+      AccessFailedCount:
+        type: integer
+        format: int64
+      AuthenticationSource:
+        type: string
+      ConcurrencyStamp:
+        type: string
+      CreationTime:
+        type: string
+        format: datetime
+      CreatorUserId:
+        type: integer
+        format: int64
+      DeleterUserId:
+        type: integer
+        format: int64
+      DeletionTime:
+        type: string
+        format: datetime
+      EmailAddress:
+        type: string
+      EmailConfirmationCode:
+        type: string
+      Id:
+        type: integer
+        format: int64
+      IsActive:
+        type: boolean
+      IsDeleted:
+        type: boolean
+      IsEmailConfirmed:
+        type: boolean
+      IsLockoutEnabled:
+        type: boolean
+      IsPhoneNumberConfirmed:
+        type: boolean
+      IsTwoFactorEnabled:
+        type: boolean
+      LastLoginTime:
+        type: string
+        format: datetime
+      LastModificationTime:
+        type: string
+        format: datetime
+      LastModifierUserId:
+        type: integer
+        format: int64
+      LockoutEndDateUtc:
+        type: string
+        format: datetime
+      Name:
+        type: string
+      NormalizedEmailAddress:
+        type: string
+      NormalizedUserName:
+        type: string
+      Password:
+        type: string
+      PasswordResetCode:
+        type: string
+      PhoneNumber:
+        type: string
+      SecurityStamp:
+        type: string
+      Surname:
+        type: string
+      TenantId:
+        type: integer
+        format: int64
+      UserName:
+        type: string
+  models.Userrole:
+    title: Userrole
+    type: object
+    properties:
+      CreationTime:
+        type: string
+        format: datetime
+      CreatorUserId:
+        type: integer
+        format: int64
+      Id:
+        type: integer
+        format: int64
+      RoleId:
+        type: integer
+        format: int64
+      TenantId:
+        type: integer
+        format: int64
+      UserId:
+        type: integer
+        format: int64
+tags:
+- name: permission
+  description: |
+    PermissionController operations for Permission
+- name: role
+  description: |
+    RoleController operations for Role
+- name: tenant
+  description: |
+    TenantController operations for Tenant
+- name: user
+  description: |
+    UserController operations for User
+- name: userrole
+  description: |
+    UserroleController operations for Userrole

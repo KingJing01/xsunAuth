@@ -1,0 +1,5 @@
+FROM golang
+
+EXPOSE 8888
+COPY . /usr/local/bin/
+ENTRYPOINT ["/usr/local/bin/baoguan"]

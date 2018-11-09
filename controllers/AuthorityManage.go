@@ -3,14 +3,15 @@ package controllers
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"strconv"
 	"strings"
 	"time"
+	inputModel "xsunAuth/inputmodels"
 	"xsunAuth/models"
 	"xsunAuth/tools"
 
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/validation"
 	jwt "github.com/dgrijalva/jwt-go"
 )
 
@@ -249,15 +250,45 @@ func (tc *AuthorityManageController) AuthorityError() {
 // @Failure 404 User not found
 // @router /Login [post]
 func (tc *AuthorityManageController) Login() {
-	l := &models.User{}
+	l := &inputModel.LoginInfo{}
 	lresult := LoginResult{}
 	json.Unmarshal(tc.Ctx.Input.RequestBody, l)
-
-	fmt.Println("Number of records deleted in database:", l.UserName, l.SysID)
-	result, user, err := models.LoginCheck(l.TenantId, l.UserName, l.Password, l.SysID)
-	if result == false {
+	valid := validation.Validation{}
+	resultUserName := valid.Required(l.UserName, "username").Message("请输入用户名")
+	if resultUserName.Ok == false {
 		lresult.Result = false
-		lresult.Message = err.Error()
+		lresult.Message = resultUserName.Error.Message
+		tc.Data["json"] = lresult
+		tc.ServeJSON()
+		return
+	}
+	resultPass := valid.Required(l.Password, "password").Message("请输入密码")
+	if resultPass.Ok == false {
+		lresult.Result = false
+		lresult.Message = resultPass.Error.Message
+		tc.Data["json"] = lresult
+		tc.ServeJSON()
+		return
+	}
+	resultSysID := valid.Required(l.SysID, "sysId").Message("系统号不能为空")
+	if resultSysID.Ok == false {
+		lresult.Result = false
+		lresult.Message = resultSysID.Error.Message
+		tc.Data["json"] = lresult
+		tc.ServeJSON()
+		return
+	}
+
+	result, user, err := models.LoginCheck(l.TenantID, l.UserName, l.Password, l.SysID)
+	respmessage := ""
+	if result == false {
+		if err == nil {
+			respmessage = "用户名和密码不匹配，重新登陆"
+		} else {
+			respmessage = err.Error()
+		}
+		lresult.Result = false
+		lresult.Message = respmessage
 		tc.Data["json"] = lresult
 		tc.ServeJSON()
 		return

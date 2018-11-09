@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/astaxie/beego/orm"
+	"github.com/astaxie/beego/validation"
 )
 
 type User struct {
@@ -41,7 +42,7 @@ type User struct {
 	TenantId               int       `orm:"column(TenantId);null"`
 	UserName               string    `orm:"column(UserName);size(32)"`
 	SysID                  string    `orm:"column(SysId);size(32)"`
-	Password               string    `orm:"column(Password);size(32)"`
+	SsoID                  string    `orm:"column(SsoId);size(32)"`
 }
 
 func (t *User) TableName() string {
@@ -200,22 +201,22 @@ func GetUserByName(username string) (result bool, err error) {
 
 //根据用户名、密码查询
 func LoginCheck(tenantid int, username string, password string, sysId string) (result bool, user User, err error) {
+	valid := validation.Validation{}
+	resultMobile := valid.Mobile(username, "username")
 	o := orm.NewOrm()
 	u := &User{}
 	result = true
-	err = o.QueryTable("user").Filter("tenantid", tenantid).Filter("UserName", username).Filter("Password", password).Filter("SysID", sysId).One(u)
-	if err == orm.ErrMultiRows {
-		// 多条的时候报错
-		result = false
-		user = *u
-		return result, user, err
-	}
-	if err == orm.ErrNoRows {
-		// 没有找到记录
-		result = false
-		user = *u
-		return result, user, err
+	//登录名格式分析  手机号码直接 ssoUser验证 其他的使用user--->sso关联
+	if resultMobile.Ok {
+		err = o.Raw("select t2.* from ssouser t1 left join user t2 on t1.id = t2.SsoId and t2.SysId=? and t1.Phone=? and t1.Passwd=?  and t2.TenantId=?", sysId, username, password, tenantid).QueryRow(&u)
+	} else {
+		err = o.Raw("select t2.* from ssouser t1 left join user t2 on t1.id = t2.SsoId and t2.SysId=? and t2.UserName=? and t1.Passwd=?  and t2.TenantId=?", sysId, username, password, tenantid).QueryRow(&u)
 	}
 	user = *u
+	// 判断是否有错误的返回
+	if err != nil || int(user.Id) == 0 {
+		result = false
+		return result, user, err
+	}
 	return true, user, nil
 }

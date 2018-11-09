@@ -279,7 +279,7 @@ func (tc *AuthorityManageController) Login() {
 		return
 	}
 
-	result, user, err := models.LoginCheck(l.TenantID, l.UserName, l.Password, l.SysID)
+	result, user, err := models.LoginCheck(l.UserName, l.Password, l.SysID)
 	respmessage := ""
 	if result == false {
 		if err == nil {

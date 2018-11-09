@@ -304,7 +304,7 @@ func (tc *AuthorityManageController) Login() {
 
 	lresult.Result = true
 	lresult.Token = tokenString
-	tc.Data["json"] = lresult
+	tc.Data["json"] = lresult 
 
 	tc.ServeJSON()
 }

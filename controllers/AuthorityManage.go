@@ -252,6 +252,7 @@ func (tc *AuthorityManageController) Login() {
 	l := &models.User{}
 	lresult := LoginResult{}
 	json.Unmarshal(tc.Ctx.Input.RequestBody, l)
+
 	fmt.Println("Number of records deleted in database:", l.UserName, l.SysID)
 	result, user, err := models.LoginCheck(l.TenantId, l.UserName, l.Password, l.SysID)
 	if result == false {

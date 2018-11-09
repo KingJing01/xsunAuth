@@ -248,7 +248,6 @@ func CreateTenant(t *Tenant, emailAddress string) (result bool, tenant *Tenant, 
 	u.UserName = AdminUserName
 	u.NormalizedEmailAddress = strings.ToUpper(u.EmailAddress)
 	u.NormalizedUserName = strings.ToUpper(AdminUserName)
-	u.Password = DefaultPassWord
 	u.Surname = AdminUserName
 	uid, err = o.Insert(u)
 	if err != nil {

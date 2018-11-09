@@ -34,7 +34,6 @@ type User struct {
 	Name                   string    `orm:"column(Name);size(32)"`
 	NormalizedEmailAddress string    `orm:"column(NormalizedEmailAddress);size(256)"`
 	NormalizedUserName     string    `orm:"column(NormalizedUserName);size(32)"`
-	Password               string    `orm:"column(Password);size(128)"`
 	PasswordResetCode      string    `orm:"column(PasswordResetCode);size(328);null"`
 	PhoneNumber            string    `orm:"column(PhoneNumber);size(32);null"`
 	SecurityStamp          string    `orm:"column(SecurityStamp);size(128);null"`
@@ -42,6 +41,7 @@ type User struct {
 	TenantId               int       `orm:"column(TenantId);null"`
 	UserName               string    `orm:"column(UserName);size(32)"`
 	SysID                  string    `orm:"column(SysId);size(32)"`
+	Password               string    `orm:"column(Password);size(32)"`
 }
 
 func (t *User) TableName() string {

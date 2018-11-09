@@ -1,8 +1,8 @@
 package main
 
 import (
-	_ "baoguan/routers"
-	"baoguan/tools"
+	_ "xsunAuth/routers"
+	"xsunAuth/tools"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"

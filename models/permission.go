@@ -11,6 +11,7 @@ import (
 )
 
 type Permission struct {
+	
 	Id            int64     `orm:"column(Id);pk"`
 	CreationTime  time.Time `orm:"column(CreationTime);type(datetime)"`
 	CreatorUserId int64     `orm:"column(CreatorUserId);null"`

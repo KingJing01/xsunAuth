@@ -47,6 +47,6 @@ func main() {
 		beego.BConfig.WebConfig.DirectoryIndex = true
 		beego.BConfig.WebConfig.StaticDir["/swagger"] = "swagger"
 	}
-
+	tools.InitRedis()
 	beego.Run()
 }

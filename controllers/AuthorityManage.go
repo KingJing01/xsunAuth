@@ -278,7 +278,7 @@ func (tc *AuthorityManageController) Login() {
 		tc.ServeJSON()
 		return
 	}
-
+	tools.Globalcluster.Do("set", "username1", "test21312")
 	result, user, err := models.LoginCheck(l.UserName, l.Password, l.SysID)
 	respmessage := ""
 	if result == false {
@@ -293,7 +293,7 @@ func (tc *AuthorityManageController) Login() {
 		tc.ServeJSON()
 		return
 	}
-
+	//_, err = redis.Do("SET", "username", "nick")
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := make(jwt.MapClaims)
 	claims["jti"] = user.Id
@@ -304,7 +304,7 @@ func (tc *AuthorityManageController) Login() {
 
 	lresult.Result = true
 	lresult.Token = tokenString
-	tc.Data["json"] = lresult 
+	tc.Data["json"] = lresult
 
 	tc.ServeJSON()
 }

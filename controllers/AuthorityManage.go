@@ -251,68 +251,85 @@ func (tc *AuthorityManageController) AuthorityError() {
 // @Failure 404 User not found
 // @router /Login [post]
 func (tc *AuthorityManageController) Login() {
-	l := &inputModel.LoginInfo{}
 	lresult := LoginResult{}
-	json.Unmarshal(tc.Ctx.Input.RequestBody, l)
-	valid := validation.Validation{}
-	resultUserName := valid.Required(l.UserName, "username").Message("请输入用户名")
-	if resultUserName.Ok == false {
-		lresult.Result = false
-		lresult.Message = resultUserName.Error.Message
-		tc.Data["json"] = lresult
-		tc.ServeJSON()
-		return
-	}
-	resultPass := valid.Required(l.Password, "password").Message("请输入密码")
-	if resultPass.Ok == false {
-		lresult.Result = false
-		lresult.Message = resultPass.Error.Message
-		tc.Data["json"] = lresult
-		tc.ServeJSON()
-		return
-	}
-	resultSysID := valid.Required(l.SysID, "sysId").Message("系统号不能为空")
-	if resultSysID.Ok == false {
-		lresult.Result = false
-		lresult.Message = resultSysID.Error.Message
-		tc.Data["json"] = lresult
-		tc.ServeJSON()
-		return
-	}
-	result, user, err := models.LoginCheck(l.UserName, l.Password, l.SysID)
-	respmessage := ""
-	if result == false {
-		if err == nil {
-			respmessage = "用户名和密码不匹配，重新登陆"
-		} else {
-			respmessage = err.Error()
-		}
-		lresult.Result = false
-		lresult.Message = respmessage
-		tc.Data["json"] = lresult
-		tc.ServeJSON()
-		return
-	}
-	token := jwt.New(jwt.SigningMethodHS256)
-	claims := make(jwt.MapClaims)
-	claims["jti"] = user.Id
-	claims["exp"] = time.Now().Add(time.Minute * time.Duration(10)).Unix()
-	claims["iat"] = time.Now().Unix()
-	token.Claims = claims
-	tokenString, err := token.SignedString([]byte(SecretKey))
-	//获取用户对应的系统权限
-	permissions, _ := models.GetPermissionByUser(user.Id, l.SysID)
-	data, err := json.Marshal(permissions)
-	tools.InitRedis()
-	tools.Globalcluster.Do("set", tokenString, user.SsoID)
-	skey := fmt.Sprintf("%s_%s", tokenString, l.SysID)
-	tools.Globalcluster.Do("set", skey, data)
-	tools.Globalcluster.Close()
-	lresult.Result = true
-	lresult.Token = tokenString
-	tc.Data["json"] = lresult
+	originToken := tc.Ctx.Request.Header.Get("Authorization")
+	// 判断 token 是否有值  token为空表示第一次登陆  不为空验证 token是否有效
+	if originToken == "" {
+		l := &inputModel.LoginInfo{}
 
-	tc.ServeJSON()
+		json.Unmarshal(tc.Ctx.Input.RequestBody, l)
+		valid := validation.Validation{}
+		resultUserName := valid.Required(l.UserName, "username").Message("请输入用户名")
+		if resultUserName.Ok == false {
+			lresult.Result = false
+			lresult.Message = resultUserName.Error.Message
+			tc.Data["json"] = lresult
+			tc.ServeJSON()
+			return
+		}
+		resultPass := valid.Required(l.Password, "password").Message("请输入密码")
+		if resultPass.Ok == false {
+			lresult.Result = false
+			lresult.Message = resultPass.Error.Message
+			tc.Data["json"] = lresult
+			tc.ServeJSON()
+			return
+		}
+		resultSysID := valid.Required(l.SysID, "sysId").Message("系统号不能为空")
+		if resultSysID.Ok == false {
+			lresult.Result = false
+			lresult.Message = resultSysID.Error.Message
+			tc.Data["json"] = lresult
+			tc.ServeJSON()
+			return
+		}
+		result, user, err := models.LoginCheck(l.UserName, l.Password, l.SysID)
+		respmessage := ""
+		if result == false {
+			if err == nil {
+				respmessage = "用户名和密码不匹配，重新登陆"
+			} else {
+				respmessage = err.Error()
+			}
+			lresult.Result = false
+			lresult.Message = respmessage
+			tc.Data["json"] = lresult
+			tc.ServeJSON()
+			return
+		}
+		token := jwt.New(jwt.SigningMethodHS256)
+		claims := make(jwt.MapClaims)
+		claims["jti"] = user.Id
+		claims["exp"] = time.Now().Add(time.Minute * time.Duration(10)).Unix()
+		claims["iat"] = time.Now().Unix()
+		token.Claims = claims
+		tokenString, err := token.SignedString([]byte(SecretKey))
+		//获取用户对应的系统权限
+		permissions, _ := models.GetPermissionByUser(user.Id, l.SysID)
+		data, err := json.Marshal(permissions)
+		tools.InitRedis()
+		tools.Globalcluster.Do("set", tokenString, user.SsoID)
+		skey := fmt.Sprintf("%s_%s", tokenString, l.SysID)
+		tools.Globalcluster.Do("set", skey, data)
+		tools.Globalcluster.Close()
+		lresult.Result = true
+		lresult.Token = tokenString
+		tc.Data["json"] = lresult
+		tc.ServeJSON()
+	} else {
+		tools.InitRedis()
+		exists, _ := tools.Globalcluster.Do("EXISTS", originToken)
+		if exists.(int64) != 0 {
+			lresult.Result = true
+			tc.Data["json"] = lresult
+			tc.ServeJSON()
+		} else {
+			lresult.Result = false
+			tc.ServeJSON()
+		}
+		tools.Globalcluster.Close()
+	}
+
 }
 
 //获取用户信息

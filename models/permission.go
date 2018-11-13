@@ -11,7 +11,6 @@ import (
 )
 
 type Permission struct {
-	
 	Id            int64     `orm:"column(Id);pk"`
 	CreationTime  time.Time `orm:"column(CreationTime);type(datetime)"`
 	CreatorUserId int64     `orm:"column(CreatorUserId);null"`
@@ -160,9 +159,9 @@ func DeletePermission(id int64) (err error) {
 	return
 }
 
-func GetPermissionByUser(userid int64) (permissions []Permission, num int64) {
+func GetPermissionByUser(userid int64, sysId string) (permissions []Permission, num int64) {
 	o := orm.NewOrm()
-	num, _ = o.QueryTable("permission").Filter("UserId", userid).All(&permissions)
+	num, _ = o.QueryTable("permission").Filter("UserId", userid).Filter("SysId", sysId).All(&permissions)
 	return permissions, num
 }
 

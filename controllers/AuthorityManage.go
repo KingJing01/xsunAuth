@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -278,7 +279,6 @@ func (tc *AuthorityManageController) Login() {
 		tc.ServeJSON()
 		return
 	}
-	tools.Globalcluster.Do("set", "username1", "test21312")
 	result, user, err := models.LoginCheck(l.UserName, l.Password, l.SysID)
 	respmessage := ""
 	if result == false {
@@ -293,7 +293,6 @@ func (tc *AuthorityManageController) Login() {
 		tc.ServeJSON()
 		return
 	}
-	//_, err = redis.Do("SET", "username", "nick")
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := make(jwt.MapClaims)
 	claims["jti"] = user.Id
@@ -301,7 +300,14 @@ func (tc *AuthorityManageController) Login() {
 	claims["iat"] = time.Now().Unix()
 	token.Claims = claims
 	tokenString, err := token.SignedString([]byte(SecretKey))
-
+	//获取用户对应的系统权限
+	permissions, _ := models.GetPermissionByUser(user.Id, l.SysID)
+	data, err := json.Marshal(permissions)
+	tools.InitRedis()
+	tools.Globalcluster.Do("set", tokenString, user.SsoID)
+	skey := fmt.Sprintf("%s_%s", tokenString, l.SysID)
+	tools.Globalcluster.Do("set", skey, data)
+	tools.Globalcluster.Close()
 	lresult.Result = true
 	lresult.Token = tokenString
 	tc.Data["json"] = lresult
@@ -337,7 +343,7 @@ func (tc *AuthorityManageController) GetUserInfo() {
 		oResult.EmailAddress = u.EmailAddress
 		oResult.PhoneNumber = u.PhoneNumber
 	}
-	permissions, _ := models.GetPermissionByUser(userid)
+	permissions, _ := models.GetPermissionByUser(userid, "0")
 	var arrPermission []string
 	for _, v := range permissions {
 		arrPermission = append(arrPermission, v.Name)

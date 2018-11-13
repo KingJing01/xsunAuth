@@ -7,8 +7,9 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	inputModel "xsunAuth/inputmodels"
+	input "xsunAuth/inputmodels"
 	"xsunAuth/models"
+	out "xsunAuth/outmodels"
 	"xsunAuth/tools"
 
 	"github.com/astaxie/beego"
@@ -66,18 +67,8 @@ type AuthorityManageController struct {
 	beego.Controller
 }
 
-type OperResult struct {
-	Result  bool
-	Message string
-}
-
-type LoginResult struct {
-	OperResult
-	Token string
-}
-
 type UserInfo struct {
-	OperResult
+	out.OperResult
 	UserId       int64
 	Name         string
 	UserName     string
@@ -89,7 +80,7 @@ type UserInfo struct {
 	Permissions  []string
 }
 type TenantInfo struct {
-	OperResult
+	out.OperResult
 	TenantId    int
 	IsDelete    bool
 	Name        string
@@ -122,7 +113,7 @@ func (c *AuthorityManageController) Options() {
 // @router /all [get]
 func (tc *AuthorityManageController) GetTenantList() {
 	token := tc.Ctx.Request.Header.Get("Authorization")
-	result := OperResult{}
+	result := &out.OperResult{}
 	ok, _, err := tools.CheckAuthority(token, "Platform.Tenant")
 	if !ok {
 		result.Result = false
@@ -184,7 +175,7 @@ func (tc *AuthorityManageController) GetTenantList() {
 // @router /GetTenant [get]
 func (tc *AuthorityManageController) GetTenant() {
 	token := tc.Ctx.Request.Header.Get("Authorization")
-	result := OperResult{}
+	result := &out.OperResult{}
 	if ok, _, err := tools.CheckAuthority(token, "Platform.Tenant"); !ok {
 		result.Result = false
 		result.Message = err.Error()
@@ -235,7 +226,7 @@ func (tc *AuthorityManageController) GetTenant() {
 
 // @router /AuthorityError [get]
 func (tc *AuthorityManageController) AuthorityError() {
-	result := OperResult{}
+	result := &out.OperResult{}
 	result.Result = false
 	result.Message = "未登录"
 	tc.Data["json"] = result
@@ -251,12 +242,11 @@ func (tc *AuthorityManageController) AuthorityError() {
 // @Failure 404 User not found
 // @router /Login [post]
 func (tc *AuthorityManageController) Login() {
-	lresult := LoginResult{}
+	lresult := &out.LoginResult{}
 	originToken := tc.Ctx.Request.Header.Get("Authorization")
 	// 判断 token 是否有值  token为空表示第一次登陆  不为空验证 token是否有效
 	if originToken == "" {
-		l := &inputModel.LoginInfo{}
-
+		l := &input.LoginInfo{}
 		json.Unmarshal(tc.Ctx.Input.RequestBody, l)
 		valid := validation.Validation{}
 		resultUserName := valid.Required(l.UserName, "username").Message("请输入用户名")
@@ -306,25 +296,31 @@ func (tc *AuthorityManageController) Login() {
 		tokenString, err := token.SignedString([]byte(SecretKey))
 		//获取用户对应的系统权限
 		permissions, _ := models.GetPermissionByUser(user.Id, l.SysID)
-		data, err := json.Marshal(permissions)
+		permissionData, err := json.Marshal(permissions)
 		tools.InitRedis()
 		tools.Globalcluster.Do("set", tokenString, user.SsoID)
+		tools.Globalcluster.Do("EXPIRE", tokenString, 12*3600)
 		skey := fmt.Sprintf("%s_%s", tokenString, l.SysID)
-		tools.Globalcluster.Do("set", skey, data)
+		tools.Globalcluster.Do("set", skey, permissionData)
 		tools.Globalcluster.Close()
 		lresult.Result = true
 		lresult.Token = tokenString
+		lresult.Data = permissions
 		tc.Data["json"] = lresult
 		tc.ServeJSON()
 	} else {
+		respmessage := &out.OperResult{}
 		tools.InitRedis()
 		exists, _ := tools.Globalcluster.Do("EXISTS", originToken)
 		if exists.(int64) != 0 {
-			lresult.Result = true
-			tc.Data["json"] = lresult
+			respmessage.Result = true
+			respmessage.Message = "token有效"
+			tc.Data["json"] = respmessage
 			tc.ServeJSON()
 		} else {
-			lresult.Result = false
+			respmessage.Result = false
+			respmessage.Message = "token失效"
+			tc.Data["json"] = respmessage
 			tc.ServeJSON()
 		}
 		tools.Globalcluster.Close()
@@ -388,7 +384,7 @@ func (tc *AuthorityManageController) Logout() {
 	// 	return
 	// }
 
-	lresult := LoginResult{}
+	lresult := &out.LoginResult{}
 	lresult.Result = true
 	lresult.Token = ""
 	lresult.Message = "登出成功"
@@ -473,7 +469,7 @@ func (tc *AuthorityManageController) CreateTenant() {
 // @router /UpdateTenant [post]
 func (tc *AuthorityManageController) UpdateTenant() {
 	token := tc.Ctx.Request.Header.Get("Authorization")
-	oResult := OperResult{}
+	oResult := &out.OperResult{}
 	ok, _, err := tools.CheckAuthority(token, "Platform.Tenant")
 	if !ok {
 		oResult.Result = false
@@ -562,7 +558,7 @@ func (tc *AuthorityManageController) UpdateTenant() {
 // @router /DeleteTenant [post]
 func (tc *AuthorityManageController) DeleteTenant() {
 	token := tc.Ctx.Request.Header.Get("Authorization")
-	oResult := OperResult{}
+	oResult := &out.OperResult{}
 	ok, _, err := tools.CheckAuthority(token, "Platform.Tenant")
 	if !ok {
 		oResult.Result = false
@@ -618,7 +614,7 @@ func (tc *AuthorityManageController) DeleteTenant() {
 // @router /SetTenantPermission [post]
 func (tc *AuthorityManageController) SetTenantPermission() {
 	token := tc.Ctx.Request.Header.Get("Authorization")
-	oResult := OperResult{}
+	oResult := &out.OperResult{}
 	ok, _, err := tools.CheckAuthority(token, "Platform.Tenant")
 	if !ok {
 		oResult.Result = false
@@ -660,7 +656,7 @@ func (tc *AuthorityManageController) SetTenantPermission() {
 // @router /GetPlatformPermissionList [get]
 func (tc *AuthorityManageController) GetPlatformPermissionList() {
 	token := tc.Ctx.Request.Header.Get("Authorization")
-	result := OperResult{}
+	result := &out.OperResult{}
 	ok, _, err := tools.CheckAuthority(token, "Platform.Permission")
 	if !ok {
 		result.Result = false
@@ -687,7 +683,7 @@ func (tc *AuthorityManageController) GetPlatformPermissionList() {
 // @router /CreatePermission [post]
 func (tc *AuthorityManageController) CreatePermission() {
 	token := tc.Ctx.Request.Header.Get("Authorization")
-	oResult := OperResult{}
+	oResult := &out.OperResult{}
 	ok, _, err := tools.CheckAuthority(token, "Platform.Permission")
 	if !ok {
 		oResult.Result = false
@@ -793,7 +789,7 @@ func (tc *AuthorityManageController) RoleList() {
 // @router /CreateRole [post]
 func (tc *AuthorityManageController) CreateRole() {
 	token := tc.Ctx.Request.Header.Get("Authorization")
-	oResult := OperResult{}
+	oResult := &out.OperResult{}
 	ok, _, err := tools.CheckAuthority(token, "Tenant.Role")
 	if !ok {
 		oResult.Result = false
@@ -868,7 +864,7 @@ func (tc *AuthorityManageController) CreateRole() {
 // @router /UpdateRole [post]
 func (tc *AuthorityManageController) UpdateRole() {
 	token := tc.Ctx.Request.Header.Get("Authorization")
-	oResult := OperResult{}
+	oResult := &out.OperResult{}
 	ok, _, err := tools.CheckAuthority(token, "Tenant.Role")
 	if !ok {
 		oResult.Result = false
@@ -955,7 +951,7 @@ func (tc *AuthorityManageController) UpdateRole() {
 // @router /DeleteRole [post]
 func (tc *AuthorityManageController) DeleteRole() {
 	token := tc.Ctx.Request.Header.Get("Authorization")
-	oResult := OperResult{}
+	oResult := &out.OperResult{}
 	ok, _, err := tools.CheckAuthority(token, "Tenant.Role")
 	if !ok {
 		oResult.Result = false
@@ -1011,7 +1007,7 @@ func (tc *AuthorityManageController) DeleteRole() {
 // @router /SetUserRoles [post]
 func (tc *AuthorityManageController) SetUserRoles() {
 	token := tc.Ctx.Request.Header.Get("Authorization")
-	oResult := OperResult{}
+	oResult := &out.OperResult{}
 	ok, _, err := tools.CheckAuthority(token, "Tenant.User")
 	if !ok {
 		oResult.Result = false

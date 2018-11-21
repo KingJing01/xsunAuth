@@ -297,16 +297,26 @@ func (tc *AuthorityManageController) Login() {
 		//获取用户对应的系统权限
 		permissions, _ := models.GetPermissionByUser(user.Id, l.SysID)
 		permissionData, err := json.Marshal(permissions)
+		// 设置 user 信息
+		/*var userOut out.UserInfoToken
+		userOut.UserName = user.UserName
+		userOut.Phone = user.PhoneNumber
+		tokenMap := make(map[string]string)
+		tokenMap["ssoId"] = string(user.SsoID)
+		jsonUser, _ := json.Marshal(userOut)
+		tokenMap["userInfo"] = string(jsonUser)*/
 		tools.InitRedis()
-		tools.Globalcluster.Do("set", tokenString, user.SsoID)
-		tools.Globalcluster.Do("EXPIRE", tokenString, 12*3600)
 		skey := fmt.Sprintf("%s_%s", tokenString, l.SysID)
 		tools.Globalcluster.Do("set", skey, permissionData)
+		//tokenInfo, _ := json.Marshal(tokenMap)
+		tools.Globalcluster.Do("set", tokenString, user.SsoID)
+		tools.Globalcluster.Do("EXPIRE", tokenString, 12*3600)
 		tools.Globalcluster.Close()
 		lresult.Result = true
 		lresult.Token = tokenString
-		lresult.Data = permissions
 		tc.Data["json"] = lresult
+		tc.Ctx.SetCookie("xy_token", tokenString, 12*3600, "/v1/authoritymanage", ".free.idcfengye.com")
+		//tc.Ctx.SetCookie("xy_token", tokenString)
 		tc.ServeJSON()
 	} else {
 		respmessage := &out.OperResult{}

@@ -2,10 +2,8 @@ package main
 
 import (
 	_ "xsunAuth/routers"
-	"xsunAuth/tools"
 
 	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/context"
 	"github.com/astaxie/beego/orm"
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -16,14 +14,13 @@ func init() {
 
 	orm.Debug = true
 
-	var FilterUser = func(ctx *context.Context) {
+	/*var FilterUser = func(ctx *context.Context) {
 		ctx.ResponseWriter.Header().Set("Access-Control-Allow-Origin", "*")                           //允许访问源
 		ctx.ResponseWriter.Header().Set("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS")    //允许post访问
 		ctx.ResponseWriter.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization") //header的类型
 		ctx.ResponseWriter.Header().Set("Access-Control-Max-Age", "1728000")
 		ctx.ResponseWriter.Header().Set("Access-Control-Allow-Credentials", "true")
 		ctx.ResponseWriter.Header().Set("content-type", "application/json") //返回数据格式是json
-
 		token := ctx.Request.Header.Get("Authorization")
 		if token == "" && ctx.Request.RequestURI != "/v1/authoritymanage/AuthorityError" && ctx.Request.RequestURI != "/v1/authoritymanage/Login" {
 			ctx.Redirect(302, "/v1/authoritymanage/AuthorityError")
@@ -37,9 +34,10 @@ func init() {
 		}
 
 		//fmt.Println("Number of records deleted in database:", username)
-	}
+	}*/
 
-	beego.InsertFilter("*", beego.BeforeRouter, FilterUser)
+	//beego.InsertFilter("*", beego.BeforeRouter, FilterUser)
+
 }
 
 func main() {

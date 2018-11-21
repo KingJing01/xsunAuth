@@ -135,6 +135,15 @@ func init() {
 
     beego.GlobalControllerRouter["xsunAuth/controllers:AuthorityManageController"] = append(beego.GlobalControllerRouter["xsunAuth/controllers:AuthorityManageController"],
         beego.ControllerComments{
+            Method: "SysLogin",
+            Router: `/SysLogin`,
+            AllowHTTPMethods: []string{"get"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
+    beego.GlobalControllerRouter["xsunAuth/controllers:AuthorityManageController"] = append(beego.GlobalControllerRouter["xsunAuth/controllers:AuthorityManageController"],
+        beego.ControllerComments{
             Method: "UpdateRole",
             Router: `/UpdateRole`,
             AllowHTTPMethods: []string{"post"},

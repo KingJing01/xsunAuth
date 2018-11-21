@@ -103,6 +103,7 @@ func (c *AuthorityManageController) URLMapping() {
 	c.Mapping("all", c.GetTenantList)
 	c.Mapping("GetTenant", c.GetTenant)
 	c.Mapping("AuthorityError", c.AuthorityError)
+	c.Mapping("SysLogin", c.SysLogin)
 }
 
 func (c *AuthorityManageController) Options() {
@@ -231,6 +232,11 @@ func (tc *AuthorityManageController) AuthorityError() {
 	result.Message = "未登录"
 	tc.Data["json"] = result
 	tc.ServeJSON()
+}
+
+// @router /SysLogin  [get]
+func (tc *AuthorityManageController) SysLogin() {
+	tc.TplName = "login.html"
 }
 
 // @Title Login

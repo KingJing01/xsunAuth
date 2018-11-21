@@ -75,21 +75,48 @@
 
 <body>
   <header>
-    <h1 class="logo">Welcome to Beego</h1>
-    <div class="description">
-      Beego is a simple & powerful Go web framework which is inspired by tornado and sinatra.
-    </div>
+    <h1 class="logo"></h1>
   </header>
-  <footer>
-    <div class="author">
-      Official website:
-      <a href="http://{{.Website}}">{{.Website}}</a> /
-      Contact me:
-      <a class="email" href="mailto:{{.Email}}">{{.Email}}</a>
-    </div>
-  </footer>
-  <div class="backdrop"></div>
 
-  <script src="/static/js/reload.min.js"></script>
+  <label>用户名</label><input type="text" name="username">
+  <label>密码</label><input type="text" name="password">
+  <label>系统</label><input type="text" name="sysId">
+  <button id ="btn" type="button">login</button> 
+  <script src="/static/js/jquery.min.js"></script>
+   <script>
+          $(document).ready(function () {
+             /*function setCookieJsonp(token) {
+              $.ajax({ 
+                     url: "http://xsungroup.free.idcfengye.com/v1/authoritymanage/Test/",
+                     type: "GET",
+                     dataType: "jsonp",
+                     crossDomain:true,
+                     success: function (data) {
+                      console.log(data)
+                    }
+                })
+             }*/
+             $("#btn").click(function () {
+                 var jsonObj = {};
+                 jsonObj.username = "jack";
+                 jsonObj.password = "123456";
+                 jsonObj.sysId = "1";
+                 $.ajax({ 
+                      url: "http://10.10.10.194:8080/v1/authoritymanage/Login",
+                      // url: "http://xsungroup.free.idcfengye.com/v1/authoritymanage/Login",
+                     type: "POST",
+                     data: JSON.stringify(jsonObj),
+                     dataType: "json", //指定服务器返回的数据类型
+                     success: function (data) {
+                         var result = JSON.stringify(data); //json对象转成字符串
+                        // if(data.Token) setCookieJsonp(data.Token)
+                    }
+                })
+              
+ 
+             });
+ 
+         });
+     </script>
 </body>
 </html>

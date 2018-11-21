@@ -226,12 +226,11 @@ func (tc *AuthorityManageController) GetTenant() {
 
 // @router /AuthorityError [get]
 func (tc *AuthorityManageController) AuthorityError() {
-	result := &out.OperResult{}
+	result := out.OperResult{}
 	result.Result = false
 	result.Message = "未登录"
 	tc.Data["json"] = result
 	tc.ServeJSON()
-
 }
 
 // @Title Login

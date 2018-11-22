@@ -14,7 +14,7 @@ import (
 )
 
 func init() {
-
+	beego.Router("/web1", &controllers.MainController{})
 	ns := beego.NewNamespace("/v1",
 
 		beego.NSNamespace("/*",

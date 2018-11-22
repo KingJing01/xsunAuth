@@ -2,14 +2,13 @@
 <head>
     <meta charset="UTF-8">
     <title>欣阳物流后台审核系统</title>
-    <link rel="icon" href="images/favicon.ico" type="image/x-icon"/>
-    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
-    <link href="css/style.css" rel="stylesheet">
-    <link href="vendor/jquery_drag/drag.css" rel="stylesheet">
+    <link rel="icon" href="/static/img/favicon.ico" type="image/x-icon"/>
+    <link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon">
+    <link href="/static/css/style.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css"
           href="http://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/jquery_drag/drag.js"></script>
+    <script src="/static/js/jquery.min.js"></script>
+
 </head>
 <body style="margin: 0;padding: 0">
 <div id="login_body">
@@ -37,7 +36,6 @@
 </div>
 <script>
     $(document).ready(function () {
-        initDrag();
         $("#username,#password,#submit").keyup(function (event) {
             code = event.which;
             if (code == 13) {
@@ -47,21 +45,11 @@
         $("#login_button_div").click(function () {
             login();
         })
-        $(window).resize(function () {
-            initDrag();
-        })
+      
     });
 
-    function initDrag() {
-        var html = " <div class=\"drag_bg\"></div><div class=\"drag_text\" onselectstart=\"return false;\" unselectable=\"on\">拖动滑块验证</div><div class=\"handler handler_bg\"></div>"
-        $("#drag").html(html).drag();
-    }
-
     function login() {
-        if ($("#drag").children(".handler_ok_bg").length == 0) {
-            $("#message_p").fadeIn().html("请进行滑动验证!");
-            return false;
-        }
+    
         if (!$("#username").val()) {
             $("#message_p").fadeIn().html("请输入用户名!");
             return false;

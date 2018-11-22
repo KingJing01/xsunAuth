@@ -237,6 +237,7 @@ func (tc *AuthorityManageController) AuthorityError() {
 // @router /SysLogin  [get]
 func (tc *AuthorityManageController) SysLogin() {
 	tc.TplName = "login.html"
+	//tc.setTpl("login.html")
 }
 
 // @Title Login

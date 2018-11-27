@@ -103,7 +103,7 @@ func (c *AuthorityManageController) URLMapping() {
 	c.Mapping("all", c.GetTenantList)
 	c.Mapping("GetTenant", c.GetTenant)
 	c.Mapping("AuthorityError", c.AuthorityError)
-	c.Mapping("SysLogin", c.SysLogin)
+	c.Mapping("xsunLogin", c.SysLogin)
 }
 
 func (c *AuthorityManageController) Options() {
@@ -234,10 +234,13 @@ func (tc *AuthorityManageController) AuthorityError() {
 	tc.ServeJSON()
 }
 
-// @router /SysLogin  [get]
+// @router /xsunLogin  [get]
 func (tc *AuthorityManageController) SysLogin() {
+	returnUrl := tc.GetString("ReturnUrl")
+	sysID := tc.GetString("SysID")
+	tc.Data["ReturnUrl"] = returnUrl
+	tc.Data["SysID"] = sysID
 	tc.TplName = "login.html"
-	//tc.setTpl("login.html")
 }
 
 // @Title Login
@@ -321,8 +324,7 @@ func (tc *AuthorityManageController) Login() {
 		lresult.Result = true
 		lresult.Token = tokenString
 		tc.Data["json"] = lresult
-		tc.Ctx.SetCookie("xy_token", tokenString, 12*3600, "/v1/authoritymanage", ".free.idcfengye.com")
-		//tc.Ctx.SetCookie("xy_token", tokenString)
+		tc.Ctx.SetCookie("xy_token", tokenString, 12*3600, "/", ".free.idcfengye.com")
 		tc.ServeJSON()
 	} else {
 		respmessage := &out.OperResult{}

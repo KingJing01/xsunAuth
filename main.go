@@ -1,6 +1,7 @@
 package main
 
 import (
+	"regexp"
 	_ "xsunAuth/routers"
 	"xsunAuth/tools"
 
@@ -17,7 +18,9 @@ func init() {
 	orm.Debug = true
 
 	var FilterUser = func(ctx *context.Context) {
-		if ctx.Request.RequestURI != "/v1/authoritymanage/SysLogin" && ctx.Request.RequestURI != "/web1" {
+		//正则匹配访问路径
+		b, _ := regexp.MatchString("/v1/authoritymanage/xsunLogin", ctx.Request.RequestURI)
+		if b == false {
 			ctx.ResponseWriter.Header().Set("Access-Control-Allow-Origin", "*")                           //允许访问源
 			ctx.ResponseWriter.Header().Set("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS")    //允许post访问
 			ctx.ResponseWriter.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization") //header的类型
